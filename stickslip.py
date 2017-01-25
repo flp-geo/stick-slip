@@ -12,6 +12,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 
+## Functions
+def movingaverage (values, window):
+    weights = np.repeat(1.0, window)/window
+    sma = np.convolve(values, weights, 'valid')
+    return sma
+
+## load file
+
 ifile = open('1_1.ascii', 'r')
 
 disp = []
@@ -26,14 +34,21 @@ for i,line in enumerate(all_data):
 	shear_stress.append(float(raw_data[1]))
 
 a = plt.figure(1)
-plt.plot(disp,shear_stress)
+plt.plot(shear_stress)
 a.show()
 ifile.close()
 
-## Derivation with moving slope
 
-N=5
-disp_mean = np.convolve(disp, np.ones((N,))/N)[(N-1):]
+## Running average to smooth Data
+
+shear_stress = movingaverage(shear_stress,2)
+disp = movingaverage(disp,2)
+
+c = plt.figure(3)
+plt.plot(shear_stress)
+c.show()
+
+## Derivation with moving slope
 
 dY = (np.roll(shear_stress, -1, axis=0) - shear_stress)[:-1]
 dX = (np.roll(disp, -1, axis=0) - disp)[:-1]
@@ -66,7 +81,10 @@ for x in disp:
 	
 
 b = plt.figure(2)
+
 for xc in peak_plt:
     plt.axvline(x=xc)
 plt.plot(disp,shear_stress-np.mean(shear_stress))
 b.show()
+
+
