@@ -2,7 +2,7 @@
 #
 # Stick-Slip tool 24.10.2017
 #
-# Florian Petersen
+# Florian Petersen and Robert Kurzawski
 #
 # Python 2.7 
 #
