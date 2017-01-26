@@ -16,16 +16,21 @@ import matplotlib.pyplot as plt
 import scipy.optimize as optimization
 from scipy import stats
 
+##################
 ## Functions
+##################
+
+## Moving average
 def movingaverage (values, window):
     weights = np.repeat(1.0, window)/window
     sma = np.convolve(values, weights, 'valid')
     return sma
 
-def func(x, a, b):
-    return a + b*x
+##################
+## Start of File
+##################
 
-## load file
+## load File
 
 a = []
 b_up = []
@@ -90,7 +95,6 @@ for M, data in enumerate(xfile):
 		if i != (len(picks)-1):
 			event = shear_stress[picks[i]:picks[i+1]]
 			if len(event) >= 3:
-				#print len(event)
 				if (event[0]-event[1]) < 0:
 					x = disp[picks[i]:picks[i+1]]
 					y = event
