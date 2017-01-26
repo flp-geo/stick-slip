@@ -2,9 +2,9 @@
 #
 # Stick-Slip tool 24.10.2017
 #
-# Florian Petersen and Robert Kurzawski
+# Florian Petersen and Robert Kurzawski MYLONITE
 #
-# Python 2.7 
+# Python 2.7
 #
 ##############################
 #!/usr/bin/python2.7
@@ -38,16 +38,16 @@ xfile = []
 xfile = glob.glob('*.ascii')
 xfile.sort()
 for M, data in enumerate(xfile):
-	
+
 	all_data = []
-	
-	
+
+
 	ifile = open(data,'r')
 	all_data = ifile
-		
+
 
 	disp = []
-	shear_stress = [] 
+	shear_stress = []
 
 	for i,line in enumerate(all_data):
 		line = line.rstrip()
@@ -85,13 +85,13 @@ for M, data in enumerate(xfile):
 	peak = disp[picks]
 
 
-	
+
 	for i in range(0, len(picks)):
 		if i != (len(picks)-1):
 			event = shear_stress[picks[i]:picks[i+1]]
 			if len(event) >= 3:
 				#print len(event)
-				if (event[0]-event[1]) < 0: 
+				if (event[0]-event[1]) < 0:
 					x = disp[picks[i]:picks[i+1]]
 					y = event
 					stress_buildup.append(disp[picks[i+1]] - disp[picks[i]])
@@ -99,8 +99,8 @@ for M, data in enumerate(xfile):
 					b_up.append(slope_tmp)
 					disp_b_up.append(x[0])
 
-				if (event[0]-event[1]) > 0: 
-					
+				if (event[0]-event[1]) > 0:
+
 					x = disp[picks[i]:picks[i+1]]
 					stress_drop.append(disp[picks[i+1]] - disp[picks[i]])
 					y = event
@@ -117,8 +117,8 @@ for M, data in enumerate(xfile):
 				continue
 			n=n+1
 		else:
-			peak_plt.append(0)		
-	
+			peak_plt.append(0)
+
 
 	ifile.close()
 fig2 = plt.figure(7)
@@ -130,5 +130,3 @@ b = plt.figure(2)
 #    plt.axvline(x=xc)
 #plt.plot(disp,shear_stress-np.mean(shear_stress))
 #b.show()
-
-
