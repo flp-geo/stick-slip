@@ -40,83 +40,87 @@ disp_b_down = []
 stress_buildup = []
 stress_drop = []
 xfile = []
-xfile = glob.glob('*.ascii')
+xfile = glob.glob('1_1.ascii')
 xfile.sort()
 for M, data in enumerate(xfile):
-
-	all_data = []
-
-
-	ifile = open(data,'r')
-	all_data = ifile
-
-
-	disp = []
-	shear_stress = []
-
-	for i,line in enumerate(all_data):
+    print data
+    all_data = []
+    ifile = open(data,'r')
+    all_data = ifile
+    disp = []
+    shear_stress = []
+    for i,line in enumerate(all_data):
 		line = line.rstrip()
 		raw_data = line.split('\t')
 		disp.append(float(raw_data[0]))
 		shear_stress.append(float(raw_data[1]))
 
-	fig = plt.figure(1)
-	plt.plot(disp,shear_stress)
-	fig.show()
-
-
-
 ## Running average to smooth Data
 
-	shear_stress = movingaverage(shear_stress,2)
-	disp = movingaverage(disp,2)
+    #f1 = plt.figure(1)
+    #plt.plot(disp,shear_stress)
+
+
+    shear_stress = movingaverage(shear_stress,2)
+    disp = movingaverage(disp,2)
+
+
+    #plt.plot(disp,shear_stress)
+    #f1.show()
 
 ## Derivation with moving slope
 
-	dY = (np.roll(shear_stress, -1, axis=0) - shear_stress)[:-1]
-	dX = (np.roll(disp, -1, axis=0) - disp)[:-1]
+    dY = (np.roll(shear_stress, -1, axis=0) - shear_stress)[:-1]
+    dX = (np.roll(disp, -1, axis=0) - disp)[:-1]
 
-	shear_stress = np.roll(shear_stress, -1, axis=0)[:-1]
-	disp = np.roll(disp, -1, axis=0)[:-1]
+    shear_stress = np.roll(shear_stress, -1, axis=0)[:-1]
+    disp = np.roll(disp, -1, axis=0)[:-1]
 
-	slopes = dY/dX
+    slopes = dY/dX
 
 ## Pick peaks of zero slope
 
-	picks = np.where(np.diff(np.sign(slopes)))[0]
+    picks = np.where(np.diff(np.sign(slopes)))[0]
 
 ## Picks to peak posisitons in Displacement
 
-	peak = disp[picks]
+    peak = disp[picks]
 
 
 
-	for i in range(0, len(picks)):
-		if i != (len(picks)-1):
-			event = shear_stress[picks[i]:picks[i+1]]
-			if len(event) >= 3:
-				if (event[0]-event[1]) < 0:
-					x = disp[picks[i]:picks[i+1]]
-					y = event
-					stress_buildup.append(disp[picks[i+1]] - disp[picks[i]])
-					slope_tmp, intercept_tmp, r_value_tmp, p_value_tmp, std_err_tmp = stats.linregress(x,y)
-					b_up.append(slope_tmp)
-					disp_b_up.append(x[0])
+    for i in range(0, len(picks)):
+        if i != (len(picks)-1):
+            event = shear_stress[picks[i]:picks[i+1]]
+            if len(event) >= 3:
+                if (event[0]-event[1]) < 0:
+                    print ' New slope '
+                    print i
+                    x = disp[picks[i]:picks[i+1]]
+                    y = event
+                    stress_buildup.append(disp[picks[i+1]] - disp[picks[i]])
+                    for j in range(3,len(x)):
+                        xy_corr = np.corrcoef(x[0:j],y[0:j])
+                        #print xy_corr
+                        #print x[0:j],y[0:j]
+                    slope_tmp, intercept_tmp, r_value_tmp, p_value_tmp, std_err_tmp = stats.linregress(x,y)
+                    b_up.append(slope_tmp)
+                    disp_b_up.append(x[0])
 
-				if (event[0]-event[1]) > 0:
 
-					x = disp[picks[i]:picks[i+1]]
-					stress_drop.append(disp[picks[i+1]] - disp[picks[i]])
-					y = event
-					slope_tmp, intercept_tmp, r_value_tmp, p_value_tmp, std_err_tmp = stats.linregress(x,y)
-					b_down.append(slope_tmp)
-					disp_b_down.append(x[0])
+                if (event[0]-event[1]) > 0:
+
+                    x = disp[picks[i]:picks[i+1]]
+                    stress_drop.append(disp[picks[i+1]] - disp[picks[i]])
+                    y = event
+                    slope_tmp, intercept_tmp, r_value_tmp, p_value_tmp, std_err_tmp = stats.linregress(x,y)
+                    b_down.append(slope_tmp)
+                    disp_b_down.append(x[0])
 
 	peak_plt = []
 	n = 0
-	for x in disp:
-		if peak[n] == x:
-			peak_plt.append(x)
+	for h in disp:
+		if peak[n] == h:
+			peak_plt.append(h)
 			if n >= (len(peak)-1):
 				continue
 			n=n+1
@@ -125,10 +129,10 @@ for M, data in enumerate(xfile):
 
 
 	ifile.close()
-fig2 = plt.figure(7)
-plt.plot(disp_b_down,np.array(b_down),'.')
-fig2.show()
-b = plt.figure(2)
+#fig2 = plt.figure(7)
+#plt.plot(disp_b_down,np.array(b_down),'.')
+#fig2.show()
+#b = plt.figure(2)
 
 #for xc in peak_plt:
 #    plt.axvline(x=xc)
