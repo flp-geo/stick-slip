@@ -86,7 +86,7 @@ for M, data in enumerate(xfile):
 
     peak = disp[picks]
 
-
+    corr_coef = []
 
     for i in range(0, len(picks)):
         if i != (len(picks)-1):
@@ -95,13 +95,20 @@ for M, data in enumerate(xfile):
                 if (event[0]-event[1]) < 0:
                     print ' New slope '
                     print i
+                    corr_coef = []
                     x = disp[picks[i]:picks[i+1]]
                     y = event
                     stress_buildup.append(disp[picks[i+1]] - disp[picks[i]])
                     for j in range(3,len(x)):
                         xy_corr = np.corrcoef(x[0:j],y[0:j])
-                        #print xy_corr
-                        #print x[0:j],y[0:j]
+                        corr_coef.append(xy_corr[0][1])
+
+                    if not corr_coef:
+                        continue
+                    if np.array(corr_coef).max() > 0:
+                        corr_coef_max = np.array(corr_coef).max()
+                        print corr_coef_max
+                        print corr_coef
                     slope_tmp, intercept_tmp, r_value_tmp, p_value_tmp, std_err_tmp = stats.linregress(x,y)
                     b_up.append(slope_tmp)
                     disp_b_up.append(x[0])
